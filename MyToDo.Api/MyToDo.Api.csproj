@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MyToDo.Domain\MyToDo.Domain.csproj" />
+    <ProjectReference Include="..\MyToDo.Infra.Data\MyToDo.Infra.Data.csproj" />
+    <ProjectReference Include="..\MyToDo.Services\MyToDo.Services.csproj" />
+  </ItemGroup>
+
+
+</Project>
