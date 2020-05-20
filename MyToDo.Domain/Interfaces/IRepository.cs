@@ -8,8 +8,8 @@ namespace MyToDo.Domain.Interfaces
 {
     public interface IRepository<T> where T : Entity
     {
-        Task<T> GetById(int id);
         IList<T> GetAll();
+        Task<T> GetById(int id);
         T Create(T obj);
         void Update(T obj);
         Task Delete(int id);

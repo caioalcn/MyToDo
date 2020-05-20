@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace MyToDo.Domain.Entities
+namespace MyToDo.Api.Models
 {
-    public class Todo : Entity
+    public class Todo
     {
-        public int Id { get; set; }
         public string Title { get; set; }
         public bool IsDone { get; set; }
         public User User { get; set; }
     }
 }
+

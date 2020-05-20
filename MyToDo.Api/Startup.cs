@@ -33,6 +33,11 @@ namespace MyToDo.Api
 
             services.AddTransient<IService<User>, UserService>();
             services.AddTransient<IRepository<User>, UserRepository>();
+            services.AddTransient<IService<Todo>, ToDoService>();
+            services.AddTransient<IRepository<Todo>, ToDoRepository>();
+
+            services.AddControllers().AddNewtonsoftJson(options =>
+                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

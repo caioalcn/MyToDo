@@ -3,21 +3,22 @@ using MyToDo.Domain.Entities;
 using MyToDo.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace MyToDo.Services.Services
 {
-    public class UserService : IService<User>
+    public class ToDoService : IService<Todo>
     {
-        private readonly IRepository<User> _repository;
+        private readonly IRepository<Todo> _repository;
 
-        public UserService(IRepository<User> repository)
+        public ToDoService(IRepository<Todo> repository)
         {
             _repository = repository;
         }
-
-        public User Create<V>(User obj) where V : AbstractValidator<User>
+        public Todo Create<V>(Todo obj) where V : AbstractValidator<Todo>
         {
+
             Validate(obj, Activator.CreateInstance<V>());
 
             return _repository.Create(obj);
@@ -33,12 +34,12 @@ namespace MyToDo.Services.Services
             await _repository.Delete(id);
         }
 
-        public IList<User> GetAll()
+        public IList<Todo> GetAll()
         {
             return _repository.GetAll();
         }
 
-        public async Task<User> GetById(int id)
+        public async Task<Todo> GetById(int id)
         {
             if (id == 0)
             {
@@ -48,14 +49,13 @@ namespace MyToDo.Services.Services
             return await _repository.GetById(id);
         }
 
-        public void Update<V>(User obj) where V : AbstractValidator<User>
+        public void Update<V>(Todo obj) where V : AbstractValidator<Todo>
         {
             Validate(obj, Activator.CreateInstance<V>());
 
             _repository.Update(obj);
         }
-
-        private void Validate(User obj, AbstractValidator<User> validator)
+        private void Validate(Todo obj, AbstractValidator<Todo> validator)
         {
             if (obj == null)
                 throw new Exception("Registros não detectados!");

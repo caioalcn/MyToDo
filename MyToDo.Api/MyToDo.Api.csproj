@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MyToDo.Domain\MyToDo.Domain.csproj" />
     <ProjectReference Include="..\MyToDo.Infra.Data\MyToDo.Infra.Data.csproj" />
     <ProjectReference Include="..\MyToDo.Services\MyToDo.Services.csproj" />
