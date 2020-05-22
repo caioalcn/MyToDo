@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using MyToDo.Api.Models;
+using MyToDo.Domain.Entities;
 using MyToDo.Domain.Interfaces;
 using MyToDo.Services.Validators;
 using System;
@@ -13,28 +15,31 @@ namespace MyToDo.Api.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly IService<Domain.Entities.User> _service;
+        private readonly IService<User> _service;
+        private readonly IMapper _mapper;
 
-        public UserController(IService<Domain.Entities.User> service)
+        public UserController(IService<User> service, IMapper mapper)
         {
             _service = service;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<User>> GetAll()
+        public ActionResult<IEnumerable<UserDto>> GetAll()
         {
-            return Ok(_service.GetAll());
+            var users = _mapper.Map<List<UserDto>>(_service.GetAll());
+            return Ok(users);
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<User> GetById(int id)
+        public ActionResult<UserDto> GetById(int id)
         {
-            var userFound = _service.GetById(id);
-            return Ok(userFound.Result);
+            var userFound = _mapper.Map<UserDto>(_service.GetById(id).Result);
+            return Ok(userFound);
         }
 
         [HttpPost]
-        public ActionResult<User> CreateUser(Domain.Entities.User user)
+        public ActionResult CreateUser(User user)
         {
             if (ModelState.IsValid)
             {
@@ -48,7 +53,7 @@ namespace MyToDo.Api.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult<User> EditUser(int id, Domain.Entities.User user)
+        public ActionResult EditUser(int id, User user)
         {
             if (id != user.Id) return BadRequest();
 

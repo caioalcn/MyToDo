@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.0" />
     <PackageReference Include="FluentValidation" Version="8.6.2" />
   </ItemGroup>
 

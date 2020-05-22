@@ -8,52 +8,53 @@ using System.Threading.Tasks;
 
 namespace MyToDo.Services.Services
 {
-    public class ToDoService : IService<Todo>
+    public class ToDoService : IServiceAuth<Todo>
     {
-        private readonly IRepository<Todo> _repository;
+        private readonly IRepositoryAuth<Todo> _repository;
 
-        public ToDoService(IRepository<Todo> repository)
+        public ToDoService(IRepositoryAuth<Todo> repository)
         {
             _repository = repository;
         }
-        public Todo Create<V>(Todo obj) where V : AbstractValidator<Todo>
+
+        public IList<Todo> GetAll(int userId)
         {
-
-            Validate(obj, Activator.CreateInstance<V>());
-
-            return _repository.Create(obj);
+            return _repository.GetAll(userId);
         }
 
-        public async Task Delete(int id)
+        public async Task<Todo> GetById(int id, int userId)
         {
             if (id == 0)
             {
                 throw new ArgumentException("The ID can't be zero.");
             }
 
-            await _repository.Delete(id);
+            return await _repository.GetById(id, userId);
         }
 
-        public IList<Todo> GetAll()
+        public Todo Create<V>(Todo obj, int userId) where V : AbstractValidator<Todo>
         {
-            return _repository.GetAll();
+
+            Validate(obj, Activator.CreateInstance<V>());
+
+            return _repository.Create(obj, userId);
         }
 
-        public async Task<Todo> GetById(int id)
+        public async Task Delete(int id, int userId)
         {
             if (id == 0)
             {
                 throw new ArgumentException("The ID can't be zero.");
             }
 
-            return await _repository.GetById(id);
+            await _repository.Delete(id, userId);
         }
 
-        public void Update<V>(Todo obj) where V : AbstractValidator<Todo>
+        public void Update<V>(Todo obj, int id, int userId) where V : AbstractValidator<Todo>
         {
             Validate(obj, Activator.CreateInstance<V>());
 
-            _repository.Update(obj);
+            _repository.Update(obj, id, userId);
         }
         private void Validate(Todo obj, AbstractValidator<Todo> validator)
         {

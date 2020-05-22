@@ -11,55 +11,40 @@ using System.Threading.Tasks;
 
 namespace MyToDo.Infra.Data.Repositories
 {
-    public class ToDoRepository : Repository, IRepository<Todo>
+    public class ToDoRepository : Repository, IRepositoryAuth<Todo>
     {
         public ToDoRepository(IConfiguration configuration) : base("dbo.Todos", configuration) { }
 
-        public IList<Todo> GetAll()
+        public IList<Todo> GetAll(int userId)
         {
             using (var conn = new SqlConnection(Connection))
             {
-                //   string sql = $"SELECT Id, Title, IsDone, UserId FROM {Table}";
-                //var result = conn.Query<Todo>(sql).ToList();
+                string sql = $"SELECT * FROM {Table} WHERE UserId = { userId }";
 
-                string sql = $"SELECT * FROM {Table} t INNER JOIN dbo.Users u ON u.Id = t.userId";
-
-                var result = conn.Query<Todo, User, Todo>(sql, map: (todo, user) =>
-                    {
-                        todo.User = user;
-                        return todo;
-                    }, splitOn: "Id,Id").ToList();
+                var result = conn.Query<Todo>(sql).ToList();
 
                 return result;
             }
         }
-        public async Task<Todo> GetById(int id)
+        public async Task<Todo> GetById(int id, int userId)
         {
             await using (var conn = new SqlConnection(Connection))
             {
-                //string sql = $"SELECT Id, Title, IsDone, UserId FROM {Table} WHERE Id = {id}";
-                string sql = $"SELECT * FROM {Table} E INNER JOIN dbo.Users R ON R.Id = E.userId WHERE Id = {id}";
+                string sql = $"SELECT * FROM {Table} WHERE Id = {id} AND UserId = { userId }";
 
-               // var result = conn.Query<Todo>(sql).FirstOrDefault();
-
-                var result = conn.Query<Todo, User, Todo>(sql, map: (todo, user) =>
-                {
-                    todo.User = user;
-                    return todo;
-                }, splitOn: "Id,Id").FirstOrDefault();
+                var result = conn.Query<Todo>(sql).FirstOrDefault();
 
                 return result;
             }
         }
-        public Todo Create(Todo obj)
+        public Todo Create(Todo obj, int userId)
         {
             using (var conn = new SqlConnection(Connection))
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("Id", obj.Id);
                 parameters.Add("Title", obj.Title);
                 parameters.Add("IsDone", obj.IsDone);
-                parameters.Add("UserId", obj.Id);
+                parameters.Add("UserId", userId);
 
                 string sql = $"INSERT INTO {Table} (Title, IsDone, UserId) VALUES (@Title, @IsDone, @UserId)";
 
@@ -68,25 +53,23 @@ namespace MyToDo.Infra.Data.Repositories
                 return obj;
             }
         }
-        public void Update(Todo obj)
+        public void Update(Todo obj, int id, int userId)
         {
             using (var conn = new SqlConnection(Connection))
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("Id", obj.Id);
                 parameters.Add("Title", obj.Title);
                 parameters.Add("IsDone", obj.IsDone);
 
-                string sql = $"UPDATE {Table} SET Title = @Title, IsDone = @IsDone WHERE Id = @Id";
-
+                string sql = $"UPDATE {Table} SET Title = @Title, IsDone = @IsDone WHERE Id = { id } AND UserId = { userId } ";
                 conn.Execute(sql, parameters);
             }
         }
-        public async Task Delete(int id)
+        public async Task Delete(int id, int userId)
         {
             await using (var conn = new SqlConnection(Connection))
             {
-                string sql = $"DELETE FROM {Table} Where @Id = Id";
+                string sql = $"DELETE FROM {Table} Where @Id = Id AND UserId = { userId }";
                 conn.Execute(sql, new { Id = id });
             }
         }

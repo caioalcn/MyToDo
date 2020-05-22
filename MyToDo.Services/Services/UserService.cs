@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using MyToDo.Domain.Crypto;
 using MyToDo.Domain.Entities;
 using MyToDo.Domain.Interfaces;
 using System;
@@ -19,6 +20,7 @@ namespace MyToDo.Services.Services
         public User Create<V>(User obj) where V : AbstractValidator<User>
         {
             Validate(obj, Activator.CreateInstance<V>());
+            obj.Password = Security.Encrypt(obj.Password);
 
             return _repository.Create(obj);
         }
